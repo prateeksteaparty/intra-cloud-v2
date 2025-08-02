@@ -6,8 +6,7 @@ const mainRouter = require('./routes/index');
 const os = require('os');
 
 const app = express();
-const PORT = 3000;
-
+const PORT = process.env.PORT || 3000;
 
 function getLocalIP() {
   const networkInterfaces = os.networkInterfaces();
@@ -15,7 +14,6 @@ function getLocalIP() {
 
   for (const interfaceName in networkInterfaces) {
     networkInterfaces[interfaceName].forEach((interfaceDetails) => {
-
       if (interfaceDetails.family === 'IPv4' && !interfaceDetails.internal) {
         localIP = interfaceDetails.address;
       }
@@ -26,12 +24,12 @@ function getLocalIP() {
 
 connectDB();
 
-
 const localIP = getLocalIP();
 const allowedOrigins = [
-  'http://localhost:5173',      
-  `http://${localIP}:5173`,      
-];
+  'http://localhost:5173',
+  `http://${localIP}:5173`,
+  'https://intra-cloud-v2.onrender.com' 
+]
 
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
@@ -45,5 +43,5 @@ app.use(cors({
 app.use('/', mainRouter);
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:3000`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });

@@ -48,7 +48,7 @@ export default function Dashboard() {
   const fetchFiles = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get('http://localhost:3000/posts', { params: { username, t: Date.now() } });
+      const response = await axios.get('https://intra-cloud-v2.onrender.com/posts', { params: { username, t: Date.now() } });
       setFiles(response.data);
     } catch (error) {
       console.error("Fetch files error:", error);
@@ -84,7 +84,7 @@ export default function Dashboard() {
   const handleDeleteFile = async (file) => {
     if (window.confirm(`Are you sure you want to delete ${file.originalName || file.imgName}?`)) {
       try {
-        await axios.delete('http://localhost:3000/delete', { data: { imgName: file.imgName, username } });
+        await axios.delete('https://intra-cloud-v2.onrender.com/delete', { data: { imgName: file.imgName, username } });
         showNotification('File deleted successfully', 'success');
         await fetchFiles();
       } catch (error) {
@@ -137,7 +137,7 @@ export default function Dashboard() {
     formData.append('file', fileToUpload);
     formData.append('username', username);
     try {
-      await axios.post('http://localhost:3000/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      await axios.post('https://intra-cloud-v2.onrender.com/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       showNotification('File uploaded successfully!', 'success');
       fetchFiles();
     } catch (error) {
