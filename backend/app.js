@@ -28,8 +28,10 @@ const localIP = getLocalIP();
 const allowedOrigins = [
   'http://localhost:5173',
   `http://${localIP}:5173`,
-  'https://intra-cloud-v2.onrender.com' 
-]
+  'https://intra-cloud-v2.onrender.com',
+  'https://intra-cloud-v2.vercel.app'  
+];
+
 
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
