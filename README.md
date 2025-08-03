@@ -4,20 +4,25 @@ IntraCloud is a lightweight, full-stack cloud storage platform that allows users
 
 ## 🔧 Features
 
-- 🔐 User authentication (signup/login with JWT)
-- ☁️ File upload functionality (client to server to DB)
-- 🧾 Dashboard to view uploaded files
-- 🗂 Organized folder-like UI (optional future improvement)
-- 🧱 Built with MERN stack
-- 📦 Ready for Docker containerization
+* 🔐 User authentication (signup/login with JWT)
+* ☁️ File upload functionality (client to server to AWS S3)
+* 🧾 Dashboard to view uploaded files
+* 🗂 Organized folder-like UI (optional future improvement)
+* 🧱 Built with MERN stack
+* 📦 Ready for Docker containerization
 
 ## 💻 Tech Stack
 
-- **Frontend**: React.js, Tailwind CSS
-- **Backend**: Node.js, Express.js
-- **Database**: MongoDB
-- **Authentication**: JWT (JSON Web Tokens)
-- **Cloud Ready**: Docker support (coming soon)
+* **Frontend**: React.js, Tailwind CSS
+* **Backend**: Node.js, Express.js
+* **Database**: MongoDB
+* **Authentication**: JWT (JSON Web Tokens)
+* **File Storage**: AWS S3 using `aws-sdk` and `multer-s3`
+* **Cloud Ready**: Docker support (coming soon)
+
+## 📂 File Storage Implementation
+
+Uploaded files are handled using `multer` and stored directly to an **AWS S3 bucket** via `multer-s3`. This ensures scalable, secure, and persistent cloud storage of user files.
 
 ## 🚀 Getting Started
 
@@ -32,6 +37,15 @@ npm install
 npm start
 
 # Start frontend
-cd fronted/intra-cloud
+cd frontend/intra-cloud
 npm install
 npm start
+```
+
+> 🔑 Make sure to set up your environment variables for MongoDB connection, JWT secret, and AWS credentials (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `S3_BUCKET_NAME`, etc.)
+
+
+
+
+
+
