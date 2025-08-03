@@ -44,6 +44,16 @@ npm start
 
 > 🔑 Make sure to set up your environment variables for MongoDB connection, JWT secret, and AWS credentials (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `S3_BUCKET_NAME`, etc.)
 
+## 📸 Screenshots
+
+![App Screenshot 1](https://i.ibb.co/mFykxGSy/img1.png)  
+![App Screenshot 2](https://i.ibb.co/kgcZjZFZ/img2.png)  
+![App Screenshot 3](https://i.ibb.co/8DCkTXSR/img3.png)  
+![App Screenshot 4](https://i.ibb.co/JwWCR0zb/img4.png)  
+![App Screenshot 5](https://i.ibb.co/wrJ9jmX2/img5.png)  
+![App Screenshot 6](https://i.ibb.co/HDvsrQpQ/img6.png)
+
+
 
 
 
