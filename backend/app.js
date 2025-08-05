@@ -29,14 +29,23 @@ const allowedOrigins = [
   'http://localhost:5173',
   `http://${localIP}:5173`,
   'https://intra-cloud-v2.onrender.com',
-  'https://intra-cloud-v2.vercel.app'  
+  'https://intra-cloud-v2.vercel.app'
 ];
-
 
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
 app.use(cors({
-  origin: allowedOrigins,
+  origin: function (origin, callback) {
+    
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
