@@ -49,7 +49,7 @@ export default function Dashboard() {
   const fetchFiles = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get('https://intra-cloud-v2.onrender.com/posts', { 
+      const response = await axios.get('https://intra-cloud-v2.onrender.com/api/posts', { 
         params: { username, t: Date.now() } 
       });
       setFiles(response.data);
@@ -115,7 +115,7 @@ const handleDownloadFile = (file) => {
   const handleDeleteFile = async (file) => {
     try {
    
-      await axios.delete('https://intra-cloud-v2.onrender.com/delete', {
+      await axios.delete('https://intra-cloud-v2.onrender.com/api/delete', {
         data: { imgName: file.imgName, username }
       });
       
@@ -182,7 +182,7 @@ const handleDownloadFile = (file) => {
     
     try {
       
-      const response = await axios.post('https://intra-cloud-v2.onrender.com/upload', formData, { 
+      const response = await axios.post('https://intra-cloud-v2.onrender.com/api/upload', formData, { 
         headers: { 'Content-Type': 'multipart/form-data' } 
       });
       

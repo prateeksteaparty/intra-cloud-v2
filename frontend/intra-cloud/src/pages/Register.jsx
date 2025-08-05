@@ -48,7 +48,7 @@ export function Register() {
         setError('');
  // checkpoint
         try {
-            const response = await axios.post('https://intra-cloud-v2.onrender.com/register', {
+            const response = await axios.post('https://intra-cloud-v2.onrender.com/api/register', {
                 username,
                 email,
                 password

@@ -41,7 +41,7 @@ export function Login() {
         setError('');
         
         try {
-            const response = await axios.post("https://intra-cloud-v2.onrender.com/login", {
+            const response = await axios.post("https://intra-cloud-v2.onrender.com/api/login", {
                 email,
                 password
             });
