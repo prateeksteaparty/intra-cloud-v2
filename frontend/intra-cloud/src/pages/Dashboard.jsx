@@ -17,7 +17,8 @@ import {
   AlertCircle,
   X,
   LogOut,
-  Settings
+  Settings,
+  Clock
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -29,15 +30,15 @@ export default function Dashboard() {
   const [notification, setNotification] = useState({ show: false, message: '', type: 'success' });
   const [searchTerm, setSearchTerm] = useState('');
   const [isVisible, setIsVisible] = useState(false);
+  const [countdowns, setCountdowns] = useState({});
+
   const navigate = useNavigate();
 
   const username = localStorage.getItem("username") || "User";
   const maxStorage = 5 * 1024 * 1024 * 1024;
 
   const mockFiles = [
-    { id: 1, imgName: "Project_Proposal.pdf", size: 2048576, createdAt: new Date().toISOString(), url: "#", type: "pdf" },
-    { id: 2, imgName: "Presentation_Slides.pptx", size: 5242880, createdAt: new Date(Date.now() - 86400000).toISOString(), url: "#", type: "presentation" },
-    { id: 3, imgName: "Budget_Analysis.xlsx", size: 1024000, createdAt: new Date(Date.now() - 172800000).toISOString(), url: "#", type: "spreadsheet" }
+   
   ];
 
   useEffect(() => {
@@ -48,7 +49,9 @@ export default function Dashboard() {
   const fetchFiles = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get('https://intra-cloud-v2.onrender.com/posts', { params: { username, t: Date.now() } });
+      const response = await axios.get('https://intra-cloud-v2.onrender.com/posts', { 
+        params: { username, t: Date.now() } 
+      });
       setFiles(response.data);
     } catch (error) {
       console.error("Fetch files error:", error);
@@ -61,41 +64,81 @@ export default function Dashboard() {
 
   const handleViewFile = (file) => {
     if (file.url && file.url !== "#") {
+    
       window.open(file.url, '_blank');
+      showNotification('File opened. Timer started for auto-deletion.', 'success');
     } else {
       showNotification('File preview not available', 'error');
     }
+    
+    startCountdown(file);
   };
 
-  const handleDownloadFile = (file) => {
-    if (file.url && file.url !== "#") {
-      const link = document.createElement('a');
-      link.href = file.url;
-      link.download = file.originalName || file.imgName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      showNotification('Download started', 'success');
-    } else {
-      showNotification('Download not available', 'error');
-    }
-  };
+const handleDownloadFile = (file) => {
+  if (file.url && file.url !== "#") {
+    const link = document.createElement('a');
+    link.href = file.url;
+    link.download = file.originalName || file.imgName || 'download'; 
+    link.target = '_blank'; 
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showNotification('Download started. Timer started for auto-deletion.', 'success');
+  } else {
+    showNotification('Download not available', 'error');
+  }
+  startCountdown(file);
+};
+
+
+ const startCountdown = (file) => {
+  if (!countdowns[file.imgName]) {
+    setCountdowns(prev => ({ ...prev, [file.imgName]: 60 }));
+
+    const interval = setInterval(() => {
+      setCountdowns(prevCountdowns => {
+        const current = prevCountdowns[file.imgName];
+        if (current > 1) {
+          return { ...prevCountdowns, [file.imgName]: current - 1 };
+        } else {
+          clearInterval(interval);
+          handleDeleteFile(file);
+          const { [file.imgName]: _, ...rest } = prevCountdowns;
+          return rest;
+        }
+      });
+    }, 1000);
+  }
+};
+
 
   const handleDeleteFile = async (file) => {
-    if (window.confirm(`Are you sure you want to delete ${file.originalName || file.imgName}?`)) {
-      try {
-        await axios.delete('https://intra-cloud-v2.onrender.com/delete', { data: { imgName: file.imgName, username } });
-        showNotification('File deleted successfully', 'success');
-        await fetchFiles();
-      } catch (error) {
-        console.error("Delete error:", error);
-        showNotification('Failed to delete file', 'error');
-      }
+    try {
+   
+      await axios.delete('https://intra-cloud-v2.onrender.com/delete', {
+        data: { imgName: file.imgName, username }
+      });
+      
+      
+      setFiles(prevFiles => prevFiles.filter(f => f.id !== file.id));
+      
+    
+      setCountdowns(prev => {
+        const { [file.imgName]: _, ...rest } = prev;
+        return rest;
+      });
+      
+      showNotification('File deleted successfully from cloud storage', 'success');
+    } catch (error) {
+      console.error("Delete error:", error);
+      showNotification('Failed to delete file from cloud storage', 'error');
     }
   };
 
   const handleRefreshFiles = () => {
     fetchFiles();
+  
+    setCountdowns({});
     showNotification('Files refreshed', 'success');
   };
 
@@ -136,10 +179,16 @@ export default function Dashboard() {
     const formData = new FormData();
     formData.append('file', fileToUpload);
     formData.append('username', username);
+    
     try {
-      await axios.post('https://intra-cloud-v2.onrender.com/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
-      showNotification('File uploaded successfully!', 'success');
-      fetchFiles();
+      
+      const response = await axios.post('https://intra-cloud-v2.onrender.com/upload', formData, { 
+        headers: { 'Content-Type': 'multipart/form-data' } 
+      });
+      
+      showNotification('File uploaded successfully to cloud storage!', 'success');
+      
+      await fetchFiles();
     } catch (error) {
       console.error("Upload error:", error);
       showNotification('File upload failed. Please try again.', 'error');
@@ -268,7 +317,7 @@ export default function Dashboard() {
                 <div className="mt-6 p-4 bg-blue-50 rounded-2xl border border-blue-200">
                   <div className="flex items-center space-x-3 mb-2">
                     <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                    <span className="font-medium text-blue-700">Uploading...</span>
+                    <span className="font-medium text-blue-700">Uploading to cloud storage...</span>
                   </div>
                   <div className="w-full bg-blue-200 rounded-full h-2">
                     <div className="bg-gradient-to-r from-blue-500 to-indigo-500 h-2 rounded-full animate-pulse" style={{ width: '60%' }}></div>
@@ -307,7 +356,7 @@ export default function Dashboard() {
                   </div>
                   <span className="font-medium text-blue-700">Refresh Files</span>
                 </button>
-                <button onClick={() => document.querySelector('input[placeholder="Search files..."]').focus()} className="group w-full flex items-center space-x-3 p-3 bg-slate-50 hover:bg-slate-100 rounded-2xl transition-all duration-300 hover:scale-105" aria-label="Focus Search Input">
+                <button onClick={() => document.querySelector('input[placeholder="Search files..."]')?.focus()} className="group w-full flex items-center space-x-3 p-3 bg-slate-50 hover:bg-slate-100 rounded-2xl transition-all duration-300 hover:scale-105" aria-label="Focus Search Input">
                   <div className="p-2 bg-gradient-to-r from-slate-500 to-slate-600 rounded-xl group-hover:scale-110 transition-transform duration-300">
                     <Search className="w-4 h-4 text-white" />
                   </div>
@@ -349,9 +398,9 @@ export default function Dashboard() {
                           {getFileIcon(file.originalName || file.imgName)}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <a href={file.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-800 truncate hover:underline">
+                          <div className="font-semibold text-slate-800 truncate">
                             {file.originalName || file.imgName}
-                          </a>
+                          </div>
                           <div className="flex items-center space-x-4 text-sm text-slate-500 mt-1">
                             <span className="flex items-center space-x-1">
                               <Calendar className="w-4 h-4" />
@@ -362,6 +411,23 @@ export default function Dashboard() {
                         </div>
                       </div>
                       <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                       
+                        {countdowns[file.imgName] && (
+                          <div className="relative group/timer">
+                            <div className="p-2 text-orange-600 bg-orange-50 rounded-xl border border-orange-200 animate-pulse">
+                              <Clock className="w-4 h-4" />
+                            </div>
+                            <span className="absolute -top-1 -right-2 text-[10px] font-bold text-orange-600 bg-white rounded-full px-1 border">
+                              {countdowns[file.imgName]}
+                            </span>
+                         
+                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover/timer:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
+                              File will be deleted in {countdowns[file.imgName]}s
+                              <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                            </div>
+                          </div>
+                        )}
+                        
                         <button onClick={() => handleViewFile(file)} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 hover:scale-110" title="View file">
                           <Eye className="w-4 h-4" />
                         </button>

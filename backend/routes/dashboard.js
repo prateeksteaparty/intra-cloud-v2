@@ -106,5 +106,27 @@ router.delete('/delete', async (req, res) => {
   }
 });
 
+router.delete('/time-delete', async (req, res) => {
+  const { imgName, username } = req.body;
+
+  if (!imgName || !username) {
+    return res.status(400).send({ error: 'imgName and username are required' });
+  }
+
+  const deleteParams = {
+    Bucket: bucketName,
+    Key: imgName
+  };
+
+  try {
+    await s3.send(new DeleteObjectCommand(deleteParams));
+    await Data.deleteOne({ imgName, username });
+    res.send({ message: 'File auto-deleted successfully' });
+  } catch (err) {
+    res.status(500).send({ error: 'Failed to auto-delete file' });
+  }
+});
+
+
 
 module.exports = router;

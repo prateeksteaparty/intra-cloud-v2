@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+const ROUTE_LINK = import.meta.env.REACT_APP_ROUTE_LINK;
 import { 
   Cloud, 
   Shield, 
@@ -53,11 +54,9 @@ export function Home() {
   ];
 
   const navigate = useNavigate();
- 
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/20 to-indigo-50">
-
       <header className="bg-white/80 backdrop-blur-xl border-b border-white/20 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
@@ -70,7 +69,7 @@ export function Home() {
                 Intra Cloud
               </h1>
             </div>
-           
+
             <div className="hidden md:flex items-center space-x-6">
               <button className="text-slate-600 hover:text-blue-600 transition-colors duration-200 font-medium">
                 Features
@@ -83,7 +82,6 @@ export function Home() {
               </button>
             </div>
 
-          
             <button 
               className="md:hidden text-slate-600"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -92,7 +90,6 @@ export function Home() {
             </button>
           </div>
 
-     
           {isMenuOpen && (
             <div className="md:hidden mt-4 pb-4 border-t border-slate-200">
               <div className="flex flex-col space-y-3 pt-4">
@@ -135,10 +132,9 @@ export function Home() {
               across all your devices from anywhere in the world.
             </p>
 
-           
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
               <button
-                onClick={()=>{navigate('/register')}}
+                onClick={() => { navigate('/register') }}
                 className="group relative px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl font-semibold text-white shadow-xl hover:shadow-blue-500/25 transform hover:scale-105 transition-all duration-300 flex items-center space-x-2"
               >
                 <span>Start Free Today</span>
@@ -146,7 +142,7 @@ export function Home() {
               </button>
               
               <button
-                onClick={()=>{navigate('/login')}}
+                onClick={() => { navigate('/login') }}
                 className="px-8 py-4 border-2 border-slate-300 rounded-2xl font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-400 transition-all duration-300 backdrop-blur-sm"
               >
                 Sign In
@@ -160,7 +156,6 @@ export function Home() {
         </div>
       </main>
 
-  
       <section className="px-6 py-24">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -202,7 +197,6 @@ export function Home() {
         </div>
       </section>
 
-   
       <section className="px-6 py-16 border-t border-slate-200">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
@@ -228,7 +222,6 @@ export function Home() {
         </div>
       </section>
 
-     
       <section className="px-6 py-24">
         <div className="max-w-4xl mx-auto">
           <div className="text-center p-12 bg-white/70 backdrop-blur-xl rounded-3xl border border-white/20 shadow-xl">
@@ -242,7 +235,7 @@ export function Home() {
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
-                onClick={()=>{navigate('/register')}}
+                onClick={() => { navigate('/register') }}
                 className="group relative px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl font-semibold text-white shadow-xl hover:shadow-blue-500/25 transform hover:scale-105 transition-all duration-300 flex items-center justify-center space-x-2"
               >
                 <span>Create Free Account</span>
@@ -250,7 +243,7 @@ export function Home() {
               </button>
               
               <button
-                onClick={()=>{navigate('/login')}}
+                onClick={() => { navigate('/login') }}
                 className="px-8 py-4 border-2 border-slate-300 rounded-2xl font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-400 transition-all duration-300"
               >
                 Already have an account?
@@ -260,7 +253,6 @@ export function Home() {
         </div>
       </section>
 
-      
       <footer className="px-6 py-8 border-t border-slate-200 bg-white/50 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
